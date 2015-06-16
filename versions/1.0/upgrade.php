@@ -109,7 +109,7 @@ $sql = <<<SQL
       `option_id` int(11) NOT NULL AUTO_INCREMENT,
       `clementine_users_privileges_id` int(10) unsigned NOT NULL,
       PRIMARY KEY (`option_id`,`clementine_users_privileges_id`),
-      INDEX `fk_clementine_reservation_option_has_privilege_clemenetine_reservation_option1 (option_id)`
+      INDEX `fk_clementine_reservation_option_has_privilege_clemenetine_reservation_option1` (`option_id`),
       INDEX `fk_clementine_reservation_option_has_privilege_clementine_users_privileges` (`clementine_users_privileges_id`),
       CONSTRAINT `fk_clementine_reservation_option_has_privilege_clemenetine_reservation_option1`
         FOREIGN KEY (`option_id`)
