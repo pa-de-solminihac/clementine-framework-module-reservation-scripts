@@ -186,7 +186,7 @@ $sql = <<<SQL
     CREATE TABLE IF NOT EXISTS `clementine_reservation_ressource_has_reservation` (
       `reservation_id` int(11) NOT NULL,
       `ressource_id` int(11) NOT NULL,
-      `primary` tinyint(1) DEFAULT NULL
+      `primary` tinyint(1) DEFAULT NULL,
       PRIMARY KEY (`reservation_id`,`ressource_id`),
       INDEX `fk_clementine_reservation_ressource_has_reservation_clementine1` (`ressource_id`),
       CONSTRAINT `fk_clementine_reservation_ressource_has_reservation_clementine1`
