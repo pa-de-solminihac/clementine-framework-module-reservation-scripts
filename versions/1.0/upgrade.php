@@ -232,35 +232,55 @@ if (!$db->prepare($sql)->execute()) {
 }
 
 $sql = <<<SQL
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'gerer_reservation');
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'creer_exception');
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'annuler_reservation_client');
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'annuler_reservation_utilisateur');
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'visualiser_stats');
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'list_reservation');
-    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'regarder_reservation');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'clementine_reservation_gerer_reservation'), (DEFAULT,'clementine_reservation_creer_exception'),(DEFAULT, 'clementine_reservation_annuler_reservation_cl'), (DEFAULT, 'clementine_reservation_annuler_reservation_ut'), (DEFAULT, 'clementine_reservation_visualiser_stats'), (DEFAULT, 'clementine_reservation_list_reservation'), (DEFAULT, 'clementine_reservation_regarder_reservation');
 SQL;
 
 if (!$db->prepare($sql)->execute()) {
     $db->rollBack();
     return false;
 }
-
-$db->commit();
-$db->beginTransaction();
+$sql = <<<SQL
+    SELECT * FROM `clementine_users_groups` WHERE `group`='administrateurs' OR `group`='clients' 
+    ORDER BY id ASC
+SQL;
+echo "lel";
+$sth = $db->prepare($sql);
+$sth->execute();
+$id_group = array();
+$res = $sth->fetchAll();
+var_dump($res);
+foreach ($res as $key => $value) {
+    if ($value['group'] == "administrateurs") {
+        $id_group[0] = $value['id'];
+    } else {
+        $id_group[1] = $value['id'];
+    }
+}
+echo "kek";
 
 $sql = <<<SQL
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 5);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 6);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 7);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 8);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 9);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 10);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 11);
-    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (2, 12);
+    SELECT id, privilege
+    FROM clementine_users_privileges
+    WHERE `privilege` = 'clementine_reservation_gerer_reservation' OR `privilege` = 'clementine_reservation_creer_exception' OR `privilege` = 'clementine_reservation_annuler_reservation_cl' OR `privilege` = 'clementine_reservation_annuler_reservation_ut' OR  `privilege` = 'clementine_reservation_visualiser_stats' OR `privilege` = 'clementine_reservation_list_reservation' OR `privilege` = 'clementine_reservation_regarder_reservation'
 SQL;
 
-
+$sth = $db->prepare($sql);
+$sth->execute();
+$res1 = $sth->fetchAll();
+$sql = "INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES";
+$i = 0;
+foreach($res1 as $key => $value) {
+    if ($i > 0) {
+        $sql .= ", ";
+    }  
+    if ($value['privilege'] == "clementine_reservation_regarder_reservation") {
+        $sql .= ' (' . $id_group[1] . ', ' . $value['id'] . ')';
+    } else {
+        $sql .= ' (' . $id_group[0] . ', ' .  $value['id'] . ')';
+    }
+    ++$i;
+}    
+echo $sql;
 if (!$db->prepare($sql)->execute()) {
     $db->rollBack();
     return false;
