@@ -243,12 +243,12 @@ $sql = <<<SQL
     SELECT * FROM `clementine_users_groups` WHERE `group`='administrateurs' OR `group`='clients' 
     ORDER BY id ASC
 SQL;
-echo "lel";
+
 $sth = $db->prepare($sql);
 $sth->execute();
 $id_group = array();
 $res = $sth->fetchAll();
-var_dump($res);
+
 foreach ($res as $key => $value) {
     if ($value['group'] == "administrateurs") {
         $id_group[0] = $value['id'];
@@ -256,7 +256,6 @@ foreach ($res as $key => $value) {
         $id_group[1] = $value['id'];
     }
 }
-echo "kek";
 
 $sql = <<<SQL
     SELECT id, privilege
@@ -280,7 +279,7 @@ foreach($res1 as $key => $value) {
     }
     ++$i;
 }    
-echo $sql;
+
 if (!$db->prepare($sql)->execute()) {
     $db->rollBack();
     return false;
