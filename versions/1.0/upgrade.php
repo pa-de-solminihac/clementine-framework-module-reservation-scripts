@@ -231,4 +231,39 @@ if (!$db->prepare($sql)->execute()) {
     return false;
 }
 
+$sql = <<<SQL
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'gerer_reservation');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'creer_exception');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'annuler_reservation_client');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'annuler_reservation_utilisateur');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'visualiser_stats');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'list_reservation');
+    INSERT INTO clementine_users_privileges(id, privilege) VALUES (DEFAULT, 'regarder_reservation');
+SQL;
+
+if (!$db->prepare($sql)->execute()) {
+    $db->rollBack();
+    return false;
+}
+
+$db->commit();
+$db->beginTransaction();
+
+$sql = <<<SQL
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 5);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 6);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 7);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 8);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 9);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 10);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (1, 11);
+    INSERT INTO clementine_users_groups_has_privileges(group_id, privilege_id) VALUES (2, 12);
+SQL;
+
+
+if (!$db->prepare($sql)->execute()) {
+    $db->rollBack();
+    return false;
+}
+
 return true;
